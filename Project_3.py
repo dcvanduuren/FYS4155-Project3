@@ -7,7 +7,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn import linear_model
 
-df = pd.read_csv('C:.\Data_project_3\insurance.csv')#, index_col=['age'])
+df = pd.read_csv('../Project 3/FYS4155-Project3/insurance.csv')
 #print(df.head(5))
 #Replace categories with numbers.
 df['sex'].replace('female',0,inplace=True)
@@ -23,11 +23,11 @@ X_min = df_scaled[['age', 'sex', 'bmi', 'children', 'smoker', 'region']].to_nump
 #Add a column of numbers with value one to get a constant beta term.
 x_1 = np.ones((X_min.shape[0],1))
 X = np.hstack((x_1, X_min))
-print(X)
+#print(X)
 y = df_scaled[['charges']].to_numpy()
 #print(y)
 #np.random.seed(245)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)    
 hidden_neurons = (100, 100, 100)
 batch_size = 20
 epochs = 20000
@@ -62,7 +62,7 @@ plt.plot(np.log10(lambdas), r2_array)
 plt.xlabel("log10 lamda")
 plt.ylabel("R2")
 plt.title("Ridge regression")
-plt.show()
+#plt.show()
 
 #Lasso regression
 nlambdas = 100
@@ -79,4 +79,29 @@ plt.plot(np.log10(lambdas), r2_array)
 plt.xlabel("log10 lamda")
 plt.ylabel("R2")
 plt.title("Lasso regression")
-plt.show()
+#plt.show()
+
+from sklearn.linear_model import LogisticRegression
+# Logistic Regression
+logreg = LogisticRegression(solver='lbfgs')
+logreg.fit(X_train, y_train)
+print("Test set accuracy with Logistic Regression: {:.2f}".format(logreg.score(X_test,y_test)))
+# Support vector machine
+svm = SVC(gamma='auto', C=100)
+svm.fit(X_train, y_train)
+print("Test set accuracy with SVM: {:.2f}".format(svm.score(X_test,y_test)))
+# Decision Trees
+deep_tree_clf = DecisionTreeClassifier(max_depth=None)
+deep_tree_clf.fit(X_train, y_train)
+print("Test set accuracy with Decision Trees: {:.2f}".format(deep_tree_clf.score(X_test,y_test)))
+
+#RandomForrest
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_validate
+#Instantiate the model with 500 trees and entropy as splitting criteria
+Random_Forest_model = RandomForestClassifier(n_estimators=500,criterion="entropy")
+Random_Forest_model.fit(X_train, np.ravel(y_train))
+#Cross validation
+accuracy = cross_validate(Random_Forest_model,X_test,y_test,cv=10)['test_score']
+print(accuracy)
+print("Test set accuracy with Random Forests and scaled data: {:.2f}".format(Random_Forest_model.score(X_test,y_test)))

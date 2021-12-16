@@ -1,5 +1,6 @@
 # import
 import pandas as pd 
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
@@ -32,10 +33,10 @@ from sklearn.ensemble import RandomForestRegressor
 X = df.drop(['charges'], axis = 1)
 Y = df.charges
 
-quad = PolynomialFeatures (degree = 2)
-x_quad = quad.fit_transform(X)
+Pol = PolynomialFeatures (degree = 2)
+x_Pol = Pol.fit_transform(X)
 
-X_train,X_test,Y_train,Y_test = train_test_split(x_quad,Y, random_state = 0)
+X_train,X_test,Y_train,Y_test = train_test_split(x_Pol,Y, random_state = 0)
 LinReg = LinearRegression().fit(X_train,Y_train)
 
 y_train_pred = LinReg.predict(X_train)
